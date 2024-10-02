@@ -9,8 +9,10 @@ fn main() {
     // let result = palindrome::Solution::is_palindrome(121);
     // println!("{:?}", result);
 
-    let target = "pwwkew".to_string();
-    let result = longuest_sub::Solution::length_of_longest_substring(target);
+    // let target = "pwwkew".to_string();
+    // let result = longuest_sub::Solution::length_of_longest_substring(target);
 
+    let target = "babad".to_string();
+    let result = longuest_palindromic::Solution::longest_palindrome(target);
     println!("{:?}", result);
 }

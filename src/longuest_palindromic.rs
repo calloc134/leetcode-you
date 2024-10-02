@@ -25,31 +25,37 @@ impl Solution {
             string: "".to_string(),
         };
 
-        // 両端のインデックスを定義
-        let mut left = 0;
-        let mut right = 0;
+        // もしかしてシャクトリ法じゃなくて組み合わせでは？
+        // 数字の組み合わせのタプルを取得
+        let collaboration_tuple = (0..s.len())
+            .flat_map(|i| (i..s.len()).map(move |j| (i, j)))
+            .collect::<Vec<(usize, usize)>>();
 
-        // シャクトリする外側ループ
-        'outer: while right < s.len() {
-            // 回文であるか検証する内側ループ
-            let mut buffer = vec![];
-            for i in left..=right {
-                buffer.push(s[i]);
-            }
+        // println!("{:?}", collaboration_tuple);
 
-            if buffer == buffer.iter().rev().cloned().collect::<Vec<char>>() {
-                // 回文であれば、次の文字を検証する
-                // まず、
-                if right - left + 1 > result.max_length {
-                    result = Result {
-                        max_length: right - left + 1,
-                        string: buffer.iter().collect(),
-                    };
+        // 回文かどうかを判定する関数
+        fn is_palindrome(s: &Vec<char>, i: usize, j: usize) -> bool {
+            let mut i = i;
+            let mut j = j;
+            while i < j {
+                if s[i] != s[j] {
+                    return false;
                 }
-                right += 1;
-            } else {
-                // 回文でなければ、左端を次に進める
-                left += 1;
+                i += 1;
+                j -= 1;
+            }
+            return true;
+        }
+
+        // この組み合わせに沿って、回文になっているかをすべて調べる
+        for (i, j) in collaboration_tuple {
+            // もし回文になっているなら、最長の長さを更新する
+            if is_palindrome(&s, i, j) {
+                let length = j - i + 1;
+                if length > result.max_length {
+                    result.max_length = length;
+                    result.string = s[i..=j].iter().collect();
+                }
             }
         }
 
