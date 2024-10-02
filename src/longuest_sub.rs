@@ -30,37 +30,26 @@ impl Solution {
         // 最終的にこれが結果になりますやんか
         let mut max_length = 0;
 
+        // 含まれている文字の集合
+        // ハッシュマップじゃなくて、すでに含まれているかどうかを判定するため集合を使う
+        // すべてのループで共有することができる
+        // この集合に存在していれば既知のアルファベットや！
+        let mut count_map = std::collections::HashSet::new();
+
         // 右のインデックスが最後を超えるまでループ
-        'outer: while right < s.len() {
-            // 含まれている文字の集合
-            // ハッシュマップじゃなくて、すでに含まれているかどうかを判定するため集合を使う
-            // この集合に存在していれば既知のアルファベットや！
-            let mut count_map = std::collections::HashSet::new();
-
-            println!("left: {}, right: {}", left, right);
-
-            // 含まれている文字を追加、もしくはカウントを増やす
-            for c in s[left..=right].iter() {
-                println!("c: {}", c);
-                if count_map.contains(c) {
-                    // 重複がある場合、左端を進める
-                    // その後whileループの方でcontimue
-                    left += 1;
-                    continue 'outer;
-                    // 汚いコードでごめんなさいの顔
-                } else {
-                    count_map.insert(c);
-                }
+        while right < s.len() {
+            // もしcount_mapに含まれているなら
+            if count_map.contains(&s[right]) {
+                // 左端を進める
+                count_map.remove(&s[left]);
+                left += 1;
+            } else {
+                // もし含まれていないなら、右端を進める
+                count_map.insert(s[right]);
+                // 最長の長さを更新
+                max_length = std::cmp::max(max_length, right - left + 1);
+                right += 1;
             }
-
-            // 重複がない場合
-            // もし最大長よりも長い場合、最大長を更新
-            if max_length < right - left + 1 {
-                max_length = right - left + 1;
-            }
-
-            // 右端を進める
-            right += 1;
         }
 
         return max_length as i32;
