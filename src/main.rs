@@ -1,4 +1,5 @@
 mod add_two_numbers;
+mod longuest_palindromic;
 mod longuest_sub;
 mod palindrome;
 mod two_sum;
