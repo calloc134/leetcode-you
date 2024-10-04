@@ -1,65 +1,80 @@
 pub struct Solution;
 impl Solution {
     pub fn longest_palindrome(s: String) -> String {
-        // charのベクタに変換
-        let s: Vec<char> = s.chars().collect();
-
-        // もし空文字なら空文字を返す
-        if s.len() == 0 {
-            return "".to_string();
+        // まずは前処理を行う
+        // 先頭と末尾、文字の間に区切り文字 '#' を挿入する
+        // これにより奇数長と偶数長の回文を同様に扱えるようになる
+        let mut processed_string: Vec<char> = Vec::with_capacity(s.len() * 2 + 1);
+        // まずは先頭に '#' を挿入
+        processed_string.push('#');
+        // 文字列 's' の各文字の間に '#' を挿入
+        for c in s.chars() {
+            processed_string.push(c);
+            processed_string.push('#');
         }
 
-        // もし一文字ならその文字を返す
-        if s.len() == 1 {
-            return s[0].to_string();
-        }
+        // 前処理後の文字列の長さ
+        let length = processed_string.len();
 
-        // 回文で最長の長さを保持する変数
-        struct Result {
-            max_length: usize,
-            string: String,
-        }
+        // 各文字位置での回文の半径を格納する配列
+        let mut palindrome_radii = vec![0; length];
 
-        let mut result = Result {
-            max_length: 0,
-            string: "".to_string(),
-        };
+        // 現在の回文の右端
+        // この右端はループにしたがって更新されていく
+        let mut right = 0;
 
-        // もしかしてシャクトリ法じゃなくて組み合わせでは？
-        // 数字の組み合わせのタプルを取得
-        let collaboration_tuple = (0..s.len())
-            .flat_map(|i| (i..s.len()).map(move |j| (i, j)))
-            .collect::<Vec<(usize, usize)>>();
+        // 文章を一文字ずつ処理していく
+        for i in 0..length {
+            // 回文を左右に拡張していく処理
+            // 中心を 'i' とする
 
-        // println!("{:?}", collaboration_tuple);
+            // 3つの条件
+            // 1. 現在のインデックス+回文の半径+1が文字列の長さを超えない(回文の右端が文字列の右端を超えない)
+            // 2. 現在のインデックスが回文の半径より大きい(回文の左端が文字列の左端を超えない)
+            // 3. 回文の左端と右端が等しい
+            // これらの条件を満たす限り、回文の半径を拡張していく
 
-        // 回文かどうかを判定する関数
-        fn is_palindrome(s: &Vec<char>, i: usize, j: usize) -> bool {
-            let mut i = i;
-            let mut j = j;
-            while i < j {
-                if s[i] != s[j] {
-                    return false;
-                }
-                i += 1;
-                j -= 1;
+            // nを半径とし、i+n+1文字目とi-n-1文字目が等しい場合、回文の半径をn+1に更新する繰り返し
+            while i + palindrome_radii[i] + 1 < length
+                && i >= palindrome_radii[i] + 1
+                && processed_string[i + palindrome_radii[i] + 1]
+                    == processed_string[i - palindrome_radii[i] - 1]
+            {
+                palindrome_radii[i] += 1;
             }
-            return true;
-        }
 
-        // この組み合わせに沿って、回文になっているかをすべて調べる
-        for (i, j) in collaboration_tuple {
-            // もし回文になっているなら、最長の長さを更新する
-            if is_palindrome(&s, i, j) {
-                let length = j - i + 1;
-                if length > result.max_length {
-                    result.max_length = length;
-                    result.string = s[i..=j].iter().collect();
-                }
+            // 回文が右端を超えた場合、右端を更新
+            if i + palindrome_radii[i] > right {
+                right = i + palindrome_radii[i];
             }
         }
 
-        return result.string;
+        // 得られた最長回文長のベクタをもとに、該当する文字列を求める処理
+        // まず最大の回文長を持つ中心を求める
+        let max_center = palindrome_radii.iter().enumerate().fold(0, |max, (i, &x)| {
+            if x > palindrome_radii[max] {
+                i
+            } else {
+                max
+            }
+        });
+
+        // 長さも求める
+        let max_len = palindrome_radii[max_center];
+
+        // 回文の開始位置と終了位置を計算
+        // 中心については分かっているので
+        let start = max_center - max_len;
+        let end = max_center + max_len;
+
+        // 回文部分文字列を構築（区切り文字 '#' を除去）
+        let palindrome = processed_string[start..=end]
+            .iter()
+            .filter(|&&c| c != '#')
+            .collect();
+
+        // 最長回文部分文字列を返す
+        palindrome
     }
 }
 
