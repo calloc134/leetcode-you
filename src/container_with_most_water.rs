@@ -1,7 +1,34 @@
 pub struct Solution {}
 impl Solution {
     pub fn max_area(height: Vec<i32>) -> i32 {
-        return 49;
+        let mut result = 0;
+        let mut left_pointer = 0;
+        let mut right_pointer = height.len() - 1;
+
+        while left_pointer < right_pointer {
+            let left_bar = height[left_pointer];
+            let right_bar = height[right_pointer];
+            let hight = if left_bar < right_bar {
+                left_bar
+            } else {
+                right_bar
+            };
+
+            let width = right_pointer - left_pointer;
+            let square = hight * width as i32;
+
+            if square > result {
+                result = square;
+            }
+
+            if left_bar < right_bar {
+                left_pointer += 1;
+            } else {
+                right_pointer -= 1;
+            }
+        }
+
+        return result;
     }
 }
 
