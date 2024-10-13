@@ -1,7 +1,6 @@
-mod two_sum;
+mod container_with_most_water;
 fn main() {
-    let nums = vec![2, 7, 11, 15];
-    let target = 9;
-    let result = two_sum::Solution::two_sum(nums, target);
+    let height = vec![1, 8, 6, 2, 5, 4, 8, 3, 7];
+    let result = container_with_most_water::Solution::max_area(height);
     println!("{:?}", result);
 }
