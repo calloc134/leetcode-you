@@ -1,7 +1,6 @@
-mod integer_to_romen;
-
+mod romen_to_integer;
 fn main() {
-    let num = 3749;
-    let result = integer_to_romen::Solution::int_to_roman(num);
+    let romen = "MCMXCIV".to_string();
+    let result = romen_to_integer::Solution::roman_to_int(romen);
     println!("{:?}", result);
 }
