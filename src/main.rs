@@ -1,5 +1,5 @@
-mod find_unique_character;
+mod is_subsequence;
 fn main() {
-    let result = find_unique_character::Solution::first_uniq_char("leetcode".to_string());
+    let result = is_subsequence::Solution::is_subsequence("abc".to_string(), "ahbgdc".to_string());
     println!("{:?}", result);
 }
