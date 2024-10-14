@@ -1,6 +1,5 @@
-mod romen_to_integer;
+mod find_unique_character;
 fn main() {
-    let romen = "MCMXCIV".to_string();
-    let result = romen_to_integer::Solution::roman_to_int(romen);
+    let result = find_unique_character::Solution::first_uniq_char("leetcode".to_string());
     println!("{:?}", result);
 }
