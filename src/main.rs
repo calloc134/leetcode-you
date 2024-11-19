@@ -1,5 +1,9 @@
-mod is_subsequence;
+mod word_break;
+mod word_break_rev;
 fn main() {
-    let result = is_subsequence::Solution::is_subsequence("abc".to_string(), "ahbgdc".to_string());
+    let result = word_break::Solution::word_break(
+        "leetcode".to_string(),
+        vec!["leet".to_string(), "code".to_string()],
+    );
     println!("{:?}", result);
 }
