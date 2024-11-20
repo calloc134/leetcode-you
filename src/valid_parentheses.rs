@@ -23,6 +23,8 @@ impl Solution {
                     if last != char {
                         return false;
                     }
+                } else {
+                    return false;
                 }
             }
 
@@ -62,5 +64,15 @@ mod tests {
     #[test]
     fn test_5() {
         assert_eq!(Solution::is_valid("{[]}".to_string()), true);
+    }
+
+    #[test]
+    fn test_6() {
+        assert_eq!(Solution::is_valid("[".to_string()), false);
+    }
+
+    #[test]
+    fn test_7() {
+        assert_eq!(Solution::is_valid("]".to_string()), false);
     }
 }
