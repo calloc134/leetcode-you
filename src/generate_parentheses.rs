@@ -2,76 +2,62 @@ use std::collections::HashSet;
 
 pub struct Solution;
 impl Solution {
-    // (を1
-    // )を0
-    // として並べ方を考えていく
-
-    // 左端は(なので1、右端は)なので0で固定
-    // 全体長Nとすると、N-2個の要素を並べることを考える
-    // 1がN/2-1個、0がN/2-1個
-
-    // 単純に深さ優先探索で探索してみる
-    // ただし、途中で)の数が(の数を上回る場合は探索を打ち切る
-    // 両端は( = 1、) = 0で固定なので、最終的に1の数と0の数が等しくなることは保証される
-
-    // 単に貪欲に1を優先して探索していく
-    pub fn dfs_1than0(n: usize) -> HashSet<Vec<bool>> {
-        let inner_card_length = n * 2 - 2; // (と ) で二倍、そこから両端を引く
+    // 内側（両端を除いた 2n-2 文字）を列挙し、最後に外側の '(' と ')' を付ける
+    fn dfs_inner(n: usize) -> HashSet<Vec<bool>> {
+        let inner_len = n * 2 - 2;
 
         let mut results: HashSet<Vec<bool>> = HashSet::new();
         let mut stack: Vec<(Vec<bool>, usize, usize)> = Vec::new();
-        stack.push((vec![true], 1, 0)); // (から始まるもの
-        stack.push((vec![false], 0, 1)); // )から始まるもの
 
-        while let Some((current, count_1, count_0)) = stack.pop() {
-            // 終了条件
-            if current.len() == inner_card_length {
+        // 先頭の '(' はすでに置いたものとしてカウントする（open=1, close=0）
+        stack.push((Vec::new(), 1, 0));
+
+        while let Some((current, open, close)) = stack.pop() {
+            if current.len() == inner_len {
                 results.insert(current);
                 continue;
             }
 
-            // 1を追加できる場合
-            if count_1 < n - 1 {
+            // '(' を追加（総 open は最大 n まで）
+            if open < n {
                 let mut next = current.clone();
                 next.push(true);
-                stack.push((next, count_1 + 1, count_0));
+                stack.push((next, open + 1, close));
             }
 
-            // 0を追加できる場合
-            if count_0 < count_1 {
+            // ')' を追加（途中で閉じ超過しない）
+            if close < open {
                 let mut next = current.clone();
                 next.push(false);
-                stack.push((next, count_1, count_0 + 1));
+                stack.push((next, open, close + 1));
             }
-
-            println!("stack detail: {:?}, results: {:?}", stack, results);
         }
 
-        println!("final results before adding ends: {:?}", results);
-
-        // 両端を付ける必要があるので付け加える
-
-        let final_results: HashSet<Vec<bool>> = results
-            .into_iter()
-            .map(|mut v| {
-                v.push(false); // 右端に)
-                v.insert(0, true); // 左端に(
-                v
-            })
-            .collect();
-        final_results
+        results
     }
 
     pub fn generate_parenthesis(n: i32) -> Vec<String> {
-        let results: HashSet<Vec<bool>> = Self::dfs_1than0(n as usize);
-        let ans: Vec<String> = results
+        let n = n.max(0) as usize;
+        if n == 0 {
+            return vec![String::new()];
+        }
+
+        let inner = Self::dfs_inner(n);
+
+        let mut ans: Vec<String> = inner
             .into_iter()
-            .map(|v| {
+            .map(|mut v| {
+                // 右端に ')', 左端に '(' を付与
+                v.push(false);
+                v.insert(0, true);
                 v.into_iter()
                     .map(|b| if b { '(' } else { ')' })
                     .collect::<String>()
             })
             .collect();
+
+        // 期待順（辞書順）にそろえる
+        ans.sort();
         ans
     }
 }
