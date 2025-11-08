@@ -13,22 +13,32 @@ pub struct KthLargest {
  */
 impl KthLargest {
     pub fn new(k: i32, nums: Vec<i32>) -> Self {
+        // k個を超えていたら削る
+        let mut nums = nums;
+        nums.sort_unstable();
+        while nums.len() > k as usize {
+            nums.remove(0);
+        }
 
         KthLargest {
             k,
-            nums: BinaryHeap::from(nums.into_iter().map(Reverse).collect::<Vec<_>>()),
+            nums: nums.into_iter().map(Reverse).collect(),
         }
     }
 
     pub fn add(&mut self, val: i32) -> i32 {
-        // 二分ヒープは昇順
+        // k個未満の場合は無条件で追加
+        if self.nums.len() < self.k as usize {
+            self.nums.push(Reverse(val));
+            return self.nums.peek().unwrap().0;
+        }
+
+        // k個以上の場合
+        // 二分ヒープは昇順になっているので
         // その一番小さい要素より大きい場合には追加
         if val > self.nums.peek().unwrap().0 {
+            self.nums.pop();
             self.nums.push(Reverse(val));
-            // 要素数をk個に制限
-            if self.nums.len() > self.k as usize {
-                self.nums.pop();
-            }
         }
 
         // k番目を返す
