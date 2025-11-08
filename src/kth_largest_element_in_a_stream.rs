@@ -1,6 +1,10 @@
+use std::{cmp::Reverse, collections::BinaryHeap};
+
 pub struct KthLargest {
     k: i32,
-    nums: Vec<i32>,
+    // nums: BinaryHeap<i32>,
+    nums: BinaryHeap<Reverse<i32>>,
+    // 要素数をk個で制限するという運用
 }
 
 /**
@@ -9,20 +13,37 @@ pub struct KthLargest {
  */
 impl KthLargest {
     pub fn new(k: i32, nums: Vec<i32>) -> Self {
-        KthLargest { k, nums }
+        // k個を超えていたら削る
+        let mut nums = nums;
+        nums.sort_unstable();
+        while nums.len() > k as usize {
+            nums.remove(0);
+        }
+
+        KthLargest {
+            k,
+            nums: nums.into_iter().map(Reverse).collect(),
+        }
     }
 
     pub fn add(&mut self, val: i32) -> i32 {
-        // まず追加
-        self.nums.push(val);
-        // 降順ソート
-        self.nums.sort_by(|a, b| b.cmp(a));
+        // k個未満の場合は無条件で追加
+        if self.nums.len() < self.k as usize {
+            self.nums.push(Reverse(val));
+            return self.nums.peek().unwrap().0;
+        }
 
-        // プリントデバッグ
-        println!("After adding {}, nums: {:?}", val, self.nums);
+        // k個以上の場合
+        // 二分ヒープは昇順になっているので
+        // その一番小さい要素より大きい場合には追加
+        if val > self.nums.peek().unwrap().0 {
+            self.nums.pop();
+            self.nums.push(Reverse(val));
+        }
 
         // k番目を返す
-        self.nums[(self.k - 1) as usize]
+        // これが常にkの最大となるので
+        self.nums.peek().unwrap().0
     }
 }
 
