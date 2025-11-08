@@ -1,7 +1,4 @@
-use crate::kth_largest_element_in_a_stream::KthLargest;
-
-mod kth_largest_element_in_a_stream;
+mod find_minimum_in_rotated_sorted_array;
 fn main() {
-    let mut kth = KthLargest::new(3, vec![4, 5, 8, 2]);
-    println!("{}", kth.add(3));
+    println!("Hello, world!");
 }
