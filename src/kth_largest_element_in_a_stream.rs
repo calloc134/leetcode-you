@@ -1,8 +1,9 @@
-use std::collections::BinaryHeap;
+use std::{cmp::Reverse, collections::BinaryHeap};
 
 pub struct KthLargest {
     k: i32,
-    nums: BinaryHeap<i32>,
+    // nums: BinaryHeap<i32>,
+    nums: BinaryHeap<Reverse<i32>>,
     // 要素数をk個で制限するという運用
 }
 
@@ -20,25 +21,20 @@ impl KthLargest {
 
         KthLargest {
             k,
-            nums: BinaryHeap::from(nums),
+            nums: BinaryHeap::from(nums.into_iter().map(Reverse).collect::<Vec<_>>()),
         }
     }
 
     pub fn add(&mut self, val: i32) -> i32 {
-        println!("Before adding {}, nums: {:?}", val, self.nums);
-        // 二分ヒープ(降順)の一番小さい要素より大きい場合には追加
-        if 
-        
-            println!("Adding value: {}", val);
-            self.nums.push(val);
+        // 二分ヒープは昇順
+        // その一番小さい要素より大きい場合には追加
+        if val > self.nums.peek().unwrap().0 {
+            self.nums.push(Reverse(val));
         }
+
         // k番目を返す
-        let mut result = self.nums.clone().into_sorted_vec();
-        // 逆順にする
-        println!("Current nums (sorted before reverse): {:?}", result);
-        result.reverse();
-        println!("Current nums (sorted): {:?}", result);
-        result[self.k as usize - 1]
+        let result = self.nums.clone().into_sorted_vec();
+        result[self.k as usize - 1].0
     }
 }
 
