@@ -30,11 +30,15 @@ impl KthLargest {
         // その一番小さい要素より大きい場合には追加
         if val > self.nums.peek().unwrap().0 {
             self.nums.push(Reverse(val));
+            // 要素数をk個に制限
+            if self.nums.len() > self.k as usize {
+                self.nums.pop();
+            }
         }
 
         // k番目を返す
-        let result = self.nums.clone().into_sorted_vec();
-        result[self.k as usize - 1].0
+        // これが常にkの最大となるので
+        self.nums.peek().unwrap().0
     }
 }
 
