@@ -13,11 +13,6 @@ pub struct KthLargest {
  */
 impl KthLargest {
     pub fn new(k: i32, nums: Vec<i32>) -> Self {
-        // 要素数がk未満の場合、MINで埋める
-        let mut nums = nums;
-        while nums.len() < k as usize {
-            nums.push(i32::MIN);
-        }
 
         KthLargest {
             k,
