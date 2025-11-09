@@ -1,4 +1,4 @@
-mod find_minimum_in_rotated_sorted_array;
+mod move_zeroes;
 fn main() {
     println!("Hello, world!");
 }
